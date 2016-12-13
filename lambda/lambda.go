@@ -52,6 +52,14 @@ func main() {
 	flag.Var(&requestHeaders, "H", "List of headers")
 	flag.Parse()
 
+	cfg, err := ini.Load("default.ini")
+	if err == nil {
+		address = cfg.Section("general").Key("url").String()
+		timeout = cfg.Section("general").Key("timeout").String()
+	} else {
+		log.Print(err)
+	}
+
 	clientTimeout, _ := time.ParseDuration(timeout)
 	fmt.Printf("Using a timeout of %s\n", clientTimeout)
 	reportingFrequency, _ := time.ParseDuration(frequency)
@@ -64,12 +72,6 @@ func main() {
 	client := &http.Client{Transport: tr}
 	client.Timeout = clientTimeout
 
-	cfg, err := ini.Load("default.ini")
-	if err == nil {
-		address = cfg.Section("general").Key("url").String()
-	} else {
-		log.Print(err)
-	}
 	fmt.Printf("Will spawn %d workers making %d requests to %s\n", concurrencycount, maxRequestCount, address)
 	runLoadTest(client, sqsurl, address, maxRequestCount, concurrencycount, awsregion, reportingFrequency, queueRegion, requestMethod, requestBody, requestHeaders)
 }
