@@ -279,6 +279,11 @@ func printSummary(result *queue.RegionsAggData) {
 		fmt.Printf("%10s %10d\n", statusStr, value)
 	}
 	fmt.Println("")
+	boldPrintln("Host(s) we did hit!")
+	for targetStr, value := range overall.Targets {
+		fmt.Printf("%10s %10d\n", targetStr, value)
+	}
+	fmt.Println("")
 }
 
 func saveJSONSummary(path string, result *queue.RegionsAggData) {

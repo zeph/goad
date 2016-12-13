@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/go-ini/ini"
 	"github.com/goadapp/goad/helpers"
 	"github.com/goadapp/goad/queue"
 )
@@ -62,6 +63,10 @@ func main() {
 	client := &http.Client{Transport: tr}
 	client.Timeout = clientTimeout
 
+	cfg, err := ini.Load([]byte("raw data"), "default.ini")
+	if err == nil {
+		address = cfg.Section("general").Key("url").String()
+	}
 	fmt.Printf("Will spawn %d workers making %d requests to %s\n", concurrencycount, maxRequestCount, address)
 	runLoadTest(client, sqsurl, address, maxRequestCount, concurrencycount, awsregion, reportingFrequency, queueRegion, requestMethod, requestBody, requestHeaders)
 }
@@ -112,6 +117,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 		var requestTimeTotal int64
 		totBytesRead := 0
 		statuses := make(map[string]int)
+		targets := make(map[string]int)
 		var firstRequestTime int64
 		var lastRequestTime int64
 		var slowest int64
@@ -158,11 +164,17 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 				timeToFirstTotal += r.ElapsedFirstByte
 				totBytesRead += r.Bytes
 				statusStr := strconv.Itoa(r.Status)
-				_, ok := statuses[statusStr]
-				if !ok {
+				_, ok1 := statuses[statusStr]
+				if !ok1 {
 					statuses[statusStr] = 1
 				} else {
 					statuses[statusStr]++
+				}
+				_, ok2 := targets[r.Host]
+				if !ok2 {
+					targets[r.Host] = 1
+				} else {
+					targets[r.Host]++
 				}
 				requestTimeTotal += r.Elapsed
 				if requestsSoFar == totalRequests {
@@ -202,6 +214,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 					timeToFirstTotal / int64(i),
 					totBytesRead,
 					statuses,
+					targets,
 					requestTimeTotal / int64(i),
 					reqPerSec,
 					kbPerSec,
