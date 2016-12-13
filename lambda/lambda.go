@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -63,14 +64,17 @@ func main() {
 	client := &http.Client{Transport: tr}
 	client.Timeout = clientTimeout
 
-	cfg, err := ini.Load([]byte("raw data"), "default.ini")
+	cfg, err := ini.Load("default.ini")
 	if err == nil {
 		address = cfg.Section("general").Key("url").String()
+	} else {
+		log.Print(err)
 	}
 	fmt.Printf("Will spawn %d workers making %d requests to %s\n", concurrencycount, maxRequestCount, address)
 	runLoadTest(client, sqsurl, address, maxRequestCount, concurrencycount, awsregion, reportingFrequency, queueRegion, requestMethod, requestBody, requestHeaders)
 }
 
+// RequestResult spitted into SQS by the lambda functions
 type RequestResult struct {
 	Time             int64  `json:"time"`
 	Host             string `json:"host"`
