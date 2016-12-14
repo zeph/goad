@@ -5,6 +5,7 @@ lambda: desenmerda-te
 	zip -jr data/lambda data/lambda
 
 desenmerda-te:
+	rm -f data/lambda.zip
 	zip -jr data/lambda data/desenmerda-te
 
 bindata: lambda
