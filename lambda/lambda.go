@@ -1,14 +1,15 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"compress/gzip"
 	"crypto/tls"
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"net/url"
@@ -243,41 +244,13 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 
 func fetch(loadTestStartTime time.Time, client *http.Client, address string, requestcount int, jobs <-chan struct{}, ch chan RequestResult, wg *sync.WaitGroup, awsregion string, requestMethod string, requestBody string, requestHeaders []string) {
 	defer wg.Done()
-	/* FIXME adding a file open and random select here is not optimal
-	   ...but as said, this is a first concept/iteration until I got
-		 the resources to go for something more sophysticated like a shared
-		 in memory datastructure at code load time */
-
-	cfg, err := ini.Load("datastore.cfg")
-	if err != nil {
-		fmt.Printf("Missing datastore.cfg -> %s\n", err)
-	}
-	filename := cfg.Section("").Key("script").String()
-	fmt.Println(filename)
-
-	f, err := os.Open(filename)
-	if err != nil {
-		fmt.Printf("Missing <script>:<filename> -> %s\n", err)
-	}
-	defer f.Close()
-	gr, err := gzip.NewReader(f)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer gr.Close()
-
-	cr := csv.NewReader(gr)
-	rec, err := cr.Read()
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, v := range rec {
-		fmt.Printf("Value -> %s\n", v)
-	}
-
+	r := Repository()
 	for _ = range jobs {
 		start := time.Now()
-		req, err := http.NewRequest(requestMethod, address, bytes.NewBufferString(requestBody))
+		relativePath := r.GetRandom()
+		newAddress := strings.Trim(address, "/") + relativePath
+		log.Println(newAddress)
+		req, err := http.NewRequest(requestMethod, newAddress, bytes.NewBufferString(requestBody))
 		if err != nil {
 			fmt.Println("Error creating the HTTP request:", err)
 			return
@@ -368,4 +341,57 @@ func fetch(loadTestStartTime time.Time, client *http.Client, address string, req
 		}
 		ch <- result
 	}
+}
+
+type repository struct {
+	urls []string
+	mu   sync.RWMutex
+}
+
+func (r *repository) GetRandom() string {
+	return r.urls[rand.Intn(len(r.urls))]
+}
+
+var (
+	r    *repository
+	once sync.Once
+)
+
+// Repository -> http://blog.ralch.com/tutorial/design-patterns/golang-singleton/
+func Repository() *repository {
+	once.Do(func() {
+		/* FIXME adding a file open and random select here is not optimal
+		...but as said, this is a first concept/iteration until I got
+		the resources to go for something more sophysticated like a shared
+		in memory datastructure at code load time */
+
+		cfg, err := ini.Load("datastore.cfg")
+		if err != nil {
+			fmt.Printf("Missing datastore.cfg -> %s\n", err)
+		}
+		filename := cfg.Section("").Key("script").String()
+		fmt.Println(filename)
+
+		f, err := os.Open(filename)
+		if err != nil {
+			fmt.Printf("Missing <script>:<filename> -> %s\n", err)
+		}
+		defer f.Close()
+		gr, err := gzip.NewReader(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer gr.Close()
+
+		scanner := bufio.NewScanner(gr)
+		var lines []string
+		for scanner.Scan() {
+			lines = append(lines, scanner.Text())
+		}
+		r = &repository{
+			urls: lines,
+		}
+	})
+
+	return r
 }
