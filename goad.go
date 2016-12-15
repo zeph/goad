@@ -77,6 +77,7 @@ func (t *Test) Start() <-chan queue.RegionsAggData {
 		awsConfig.WithCredentials(creds)
 	}
 
+	// FIXME I need to ZIP the current folder and extend lambda.zip before this
 	infra, err := infrastructure.New(t.config.Regions, awsConfig)
 	if err != nil {
 		log.Fatal(err)

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/signal"
 	"sort"
@@ -14,6 +15,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	"github.com/go-ini/ini"
 	"github.com/goadapp/goad"
 	"github.com/goadapp/goad/helpers"
 	"github.com/goadapp/goad/queue"
@@ -56,6 +58,19 @@ func main() {
 	if printVersion {
 		fmt.Println(version.Version)
 		os.Exit(0)
+	}
+
+	cfg, err := ini.Load("default.ini")
+	if err == nil {
+		url = cfg.Section("general").Key("url").String()
+		/* it seems we have mismatch on how we read
+		the timeout param on 2 different interfaces */
+		timeoutArg := cfg.Section("general").Key("timeout").String()
+		timeoutObj, _ := time.ParseDuration(timeoutArg)
+		timeout = uint(timeoutObj)
+		//
+	} else {
+		log.Print(err)
 	}
 
 	if url == "" {

@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -16,7 +15,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/go-ini/ini"
 	"github.com/goadapp/goad/helpers"
 	"github.com/goadapp/goad/queue"
 )
@@ -51,14 +49,6 @@ func main() {
 
 	flag.Var(&requestHeaders, "H", "List of headers")
 	flag.Parse()
-
-	cfg, err := ini.Load("default.ini")
-	if err == nil {
-		address = cfg.Section("general").Key("url").String()
-		timeout = cfg.Section("general").Key("timeout").String()
-	} else {
-		log.Print(err)
-	}
 
 	clientTimeout, _ := time.ParseDuration(timeout)
 	fmt.Printf("Using a timeout of %s\n", clientTimeout)
