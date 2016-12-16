@@ -63,6 +63,8 @@ func main() {
 	cfg, err := ini.LoadSources(ini.LoadOptions{AllowBooleanKeys: true}, "default.ini")
 	if err == nil {
 		url = cfg.Section("general").Key("url").String()
+		concurrency, _ = cfg.Section("general").Key("concurrency").Uint()
+		requests, _ = cfg.Section("general").Key("requests").Uint()
 		/* it seems we have mismatch on how we read
 		the timeout param on 2 different interfaces */
 		timeoutArg := cfg.Section("general").Key("timeout").String()
