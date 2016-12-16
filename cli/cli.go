@@ -60,14 +60,14 @@ func main() {
 		os.Exit(0)
 	}
 
-	cfg, err := ini.Load("default.ini")
+	cfg, err := ini.LoadSources(ini.LoadOptions{AllowBooleanKeys: true}, "default.ini")
 	if err == nil {
 		url = cfg.Section("general").Key("url").String()
 		/* it seems we have mismatch on how we read
 		the timeout param on 2 different interfaces */
 		timeoutArg := cfg.Section("general").Key("timeout").String()
 		timeoutObj, _ := time.ParseDuration(timeoutArg)
-		timeout = uint(timeoutObj)
+		timeout = uint(timeoutObj.Seconds())
 		//
 	} else {
 		log.Print(err)
