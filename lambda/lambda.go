@@ -97,7 +97,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 	fmt.Print("Spawning workers…")
 	for i := 0; i < concurrencycount; i++ {
 		wg.Add(1)
-		go fetch(loadTestStartTime, client, url, totalRequests, jobs, ch, &wg, awsregion, requestMethod, requestBody, requestHeaders)
+		go fetch(loadTestStartTime, client, url, totalRequests, jobs, ch, &wg, requestMethod, requestBody, requestHeaders)
 		fmt.Print(".")
 	}
 	fmt.Println(" done.\nWaiting for results…")
@@ -228,7 +228,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 
 }
 
-func fetch(loadTestStartTime time.Time, client *http.Client, address string, requestcount int, jobs <-chan struct{}, ch chan RequestResult, wg *sync.WaitGroup, awsregion string, requestMethod string, requestBody string, requestHeaders []string) {
+func fetch(loadTestStartTime time.Time, client *http.Client, address string, requestcount int, jobs <-chan struct{}, ch chan RequestResult, wg *sync.WaitGroup, requestMethod string, requestBody string, requestHeaders []string) {
 	defer wg.Done()
 	for _ = range jobs {
 		start := time.Now()
