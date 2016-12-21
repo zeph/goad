@@ -67,12 +67,9 @@ func main() {
 		url = cfg.Section("general").Key("url").String()
 		concurrency, _ = cfg.Section("general").Key("concurrency").Uint()
 		requests, _ = cfg.Section("general").Key("requests").Uint()
-		/* it seems we have mismatch on how we read
-		the timeout param on 2 different interfaces */
 		timeoutArg := cfg.Section("general").Key("timeout").String()
 		timeoutObj, _ := time.ParseDuration(timeoutArg)
 		timeout = uint(timeoutObj.Seconds())
-		//
 		regionsList = cfg.Section("regions").KeyStrings()
 	} else {
 		log.Print(err)
