@@ -1,6 +1,6 @@
 UPDATE (related to this fork): just run the binary, with no parameters
 
-...u need to be in the desenmerda-te/ folder for this. Edit [default.ini](/zeph/goad/blob/master/desenmerda-te/default.ini) as u wish
+...u need to be in the desenmerda-te/ folder for this. Edit [default.ini](desenmerda-te/default.ini) as u wish
 
 # Goad
 
