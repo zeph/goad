@@ -15,12 +15,12 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/go-ini/ini"
 	"github.com/goadapp/goad"
 	"github.com/goadapp/goad/helpers"
 	"github.com/goadapp/goad/queue"
 	"github.com/goadapp/goad/version"
 	"github.com/nsf/termbox-go"
+	"github.com/zeph/ini"
 )
 
 var (
