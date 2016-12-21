@@ -143,8 +143,7 @@ func (t *Test) invokeLambdas(awsConfig *aws.Config, sqsURL string) {
 			Args: args,
 		}
 
-		// FIXME this seems not really getting updated
-		config := awsConfig.WithRegion(region)
+		config := aws.NewConfig().WithRegion(region)
 		go t.invokeLambda(config, invokeargs)
 	}
 }
