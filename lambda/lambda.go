@@ -50,6 +50,8 @@ func main() {
 	flag.Var(&requestHeaders, "H", "List of headers")
 	flag.Parse()
 
+	fmt.Printf("\nDEBUG ->\n\tawsregion: %s\n\tqueueRegion: %s\n\tsqsUrl: %s\n\n", awsregion, queueRegion, sqsurl)
+
 	clientTimeout, _ := time.ParseDuration(timeout)
 	fmt.Printf("Using a timeout of %s\n", clientTimeout)
 	reportingFrequency, _ := time.ParseDuration(frequency)
