@@ -60,6 +60,8 @@ func main() {
 		os.Exit(0)
 	}
 
+	regionsList := strings.Split(regions, ",")
+
 	cfg, err := ini.LoadSources(ini.LoadOptions{AllowBooleanKeys: true}, "default.ini")
 	if err == nil {
 		url = cfg.Section("general").Key("url").String()
@@ -71,6 +73,9 @@ func main() {
 		timeoutObj, _ := time.ParseDuration(timeoutArg)
 		timeout = uint(timeoutObj.Seconds())
 		//
+		regionsList = cfg.Section("regions").KeyStrings()
+		log.Print(regionsList)
+		//os.Exit(0)
 	} else {
 		log.Print(err)
 	}
@@ -85,7 +90,7 @@ func main() {
 		Concurrency:    concurrency,
 		TotalRequests:  requests,
 		RequestTimeout: time.Duration(timeout) * time.Second,
-		Regions:        strings.Split(regions, ","),
+		Regions:        regionsList,
 		Method:         method,
 		Body:           body,
 		Headers:        headers,
