@@ -74,8 +74,6 @@ func main() {
 		timeout = uint(timeoutObj.Seconds())
 		//
 		regionsList = cfg.Section("regions").KeyStrings()
-		log.Print(regionsList)
-		//os.Exit(0)
 	} else {
 		log.Print(err)
 	}
