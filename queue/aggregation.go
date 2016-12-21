@@ -14,6 +14,7 @@ type AggData struct {
 	AveTimeToFirst       int64          `json:"ave-time-to-first"`
 	TotBytesRead         int            `json:"tot-bytes-read"`
 	Statuses             map[string]int `json:"statuses"`
+	Targets              map[string]int `json:"targets"`
 	AveTimeForReq        int64          `json:"ave-time-for-req"`
 	AveReqPerSec         float32        `json:"ave-req-per-sec"`
 	AveKBytesPerSec      float32        `json:"ave-kbytes-per-sec"`
@@ -62,6 +63,9 @@ func addResult(data *AggData, result *AggData, isFinalSum bool) {
 	for key, value := range result.Statuses {
 		data.Statuses[key] += value
 	}
+	for key, value := range result.Targets {
+		data.Targets[key] += value
+	}
 
 	if result.Slowest > data.Slowest {
 		data.Slowest = result.Slowest
@@ -75,6 +79,7 @@ func addResult(data *AggData, result *AggData, isFinalSum bool) {
 func SumRegionResults(regionData *RegionsAggData) *AggData {
 	var totals AggData
 	totals.Statuses = make(map[string]int)
+	totals.Targets = make(map[string]int)
 	for _, data := range regionData.Regions {
 		addResult(&totals, &data, true)
 	}
@@ -100,6 +105,7 @@ func aggregate(results chan RegionsAggData, awsConfig *aws.Config, queueURL stri
 			regionData, ok := data.Regions[result.Region]
 			if !ok {
 				regionData.Statuses = make(map[string]int)
+				regionData.Targets = make(map[string]int)
 				regionData.Region = result.Region
 			}
 			addResult(&regionData, result, false)

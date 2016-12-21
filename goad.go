@@ -41,11 +41,16 @@ type invokeArgs struct {
 const nano = 1000000000
 
 var supportedRegions = []string{
-	"us-east-1",
-	"us-west-2",
-	"eu-west-1",
-	"ap-northeast-1",
-	"eu-central-1",
+	"us-east-1",      //N.Virginia
+	"us-east-2",      //Ohio
+	"us-west-1",      //N.California
+	"us-west-2",      //Oregon
+	"eu-west-1",      //Ireland
+	"eu-central-1",   //Frankfurt
+	"ap-southeast-1", //Singapore
+	"ap-southeast-2", //Tokio
+	"ap-northeast-1", //Sydney
+	"ap-northeast-2", //Seoul
 }
 
 // Test type
@@ -74,6 +79,7 @@ func (t *Test) Start() <-chan queue.RegionsAggData {
 		awsConfig.WithCredentials(creds)
 	}
 
+	// FIXME I need to ZIP the current folder and extend lambda.zip before this
 	infra, err := infrastructure.New(t.config.Regions, awsConfig)
 	if err != nil {
 		log.Fatal(err)
@@ -139,7 +145,7 @@ func (t *Test) invokeLambdas(awsConfig *aws.Config, sqsURL string) {
 			Args: args,
 		}
 
-		config := awsConfig.WithRegion(region)
+		config := aws.NewConfig().WithRegion(region)
 		go t.invokeLambda(config, invokeargs)
 	}
 }

@@ -10,3 +10,10 @@ build/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+*.DS_Store
+*.olx
+*.gz
+Vagrantfile
+.vagrant
+*.log

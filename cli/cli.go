@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/signal"
 	"sort"
@@ -19,6 +20,7 @@ import (
 	"github.com/goadapp/goad/queue"
 	"github.com/goadapp/goad/version"
 	"github.com/nsf/termbox-go"
+	"github.com/zeph/ini"
 )
 
 var (
@@ -58,6 +60,26 @@ func main() {
 		os.Exit(0)
 	}
 
+	regionsList := strings.Split(regions, ",")
+
+	cfg, err := ini.LoadSources(ini.LoadOptions{AllowBooleanKeys: true}, "default.ini")
+	if err == nil {
+		url = cfg.Section("general").Key("url").String()
+		concurrency, _ = cfg.Section("general").Key("concurrency").Uint()
+		requests, _ = cfg.Section("general").Key("requests").Uint()
+		/* it seems we have mismatch on how we read
+		the timeout param on 2 different interfaces */
+		timeoutArg := cfg.Section("general").Key("timeout").String()
+		timeoutObj, _ := time.ParseDuration(timeoutArg)
+		timeout = uint(timeoutObj.Seconds())
+		//
+		regionsList = cfg.Section("regions").KeyStrings()
+		log.Print(regionsList)
+		//os.Exit(0)
+	} else {
+		log.Print(err)
+	}
+
 	if url == "" {
 		flag.Usage()
 		os.Exit(0)
@@ -68,7 +90,7 @@ func main() {
 		Concurrency:    concurrency,
 		TotalRequests:  requests,
 		RequestTimeout: time.Duration(timeout) * time.Second,
-		Regions:        strings.Split(regions, ","),
+		Regions:        regionsList,
 		Method:         method,
 		Body:           body,
 		Headers:        headers,
@@ -277,6 +299,11 @@ func printSummary(result *queue.RegionsAggData) {
 	boldPrintln("HTTPStatus   Requests")
 	for statusStr, value := range overall.Statuses {
 		fmt.Printf("%10s %10d\n", statusStr, value)
+	}
+	fmt.Println("")
+	boldPrintln("Host(s) we did hit!")
+	for targetStr, value := range overall.Targets {
+		fmt.Printf("%10s %10d\n", targetStr, value)
 	}
 	fmt.Println("")
 }

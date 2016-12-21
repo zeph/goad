@@ -1,8 +1,11 @@
-all: osx linux windows
+all: test osx linux windows
 
-lambda:
+lambda: desenmerda-te
 	GOOS=linux GOARCH=amd64 go build -o data/lambda/goad-lambda ./lambda
 	zip -jr data/lambda data/lambda
+
+desenmerda-te:
+	zip -jr data/lambda data/desenmerda-te
 
 bindata: lambda
 	go get github.com/jteeuwen/go-bindata/...
@@ -32,3 +35,6 @@ all-zip: all
 	zip -jr ./build/zip/goad-windows-x86 ./build/windows/x86/goad
 
 .PHONY: lambda bindata
+
+test:
+		cd queue; go test

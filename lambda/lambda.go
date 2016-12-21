@@ -50,6 +50,8 @@ func main() {
 	flag.Var(&requestHeaders, "H", "List of headers")
 	flag.Parse()
 
+	fmt.Printf("\nDEBUG:\n - awsregion: %s\n - queueRegion: %s\n - sqsUrl: %s\n", awsregion, queueRegion, sqsurl)
+
 	clientTimeout, _ := time.ParseDuration(timeout)
 	fmt.Printf("Using a timeout of %s\n", clientTimeout)
 	reportingFrequency, _ := time.ParseDuration(frequency)
@@ -66,6 +68,7 @@ func main() {
 	runLoadTest(client, sqsurl, address, maxRequestCount, concurrencycount, awsregion, reportingFrequency, queueRegion, requestMethod, requestBody, requestHeaders)
 }
 
+// RequestResult spitted into SQS by the lambda functions
 type RequestResult struct {
 	Time             int64  `json:"time"`
 	Host             string `json:"host"`
@@ -96,7 +99,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 	fmt.Print("Spawning workers…")
 	for i := 0; i < concurrencycount; i++ {
 		wg.Add(1)
-		go fetch(loadTestStartTime, client, url, totalRequests, jobs, ch, &wg, awsregion, requestMethod, requestBody, requestHeaders)
+		go fetch(loadTestStartTime, client, url, totalRequests, jobs, ch, &wg, requestMethod, requestBody, requestHeaders)
 		fmt.Print(".")
 	}
 	fmt.Println(" done.\nWaiting for results…")
@@ -112,6 +115,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 		var requestTimeTotal int64
 		totBytesRead := 0
 		statuses := make(map[string]int)
+		targets := make(map[string]int)
 		var firstRequestTime int64
 		var lastRequestTime int64
 		var slowest int64
@@ -158,11 +162,17 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 				timeToFirstTotal += r.ElapsedFirstByte
 				totBytesRead += r.Bytes
 				statusStr := strconv.Itoa(r.Status)
-				_, ok := statuses[statusStr]
-				if !ok {
+				_, ok1 := statuses[statusStr]
+				if !ok1 {
 					statuses[statusStr] = 1
 				} else {
 					statuses[statusStr]++
+				}
+				_, ok2 := targets[r.Host]
+				if !ok2 {
+					targets[r.Host] = 1
+				} else {
+					targets[r.Host]++
 				}
 				requestTimeTotal += r.Elapsed
 				if requestsSoFar == totalRequests {
@@ -202,6 +212,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 					timeToFirstTotal / int64(i),
 					totBytesRead,
 					statuses,
+					targets,
 					requestTimeTotal / int64(i),
 					reqPerSec,
 					kbPerSec,
@@ -219,7 +230,7 @@ func runLoadTest(client *http.Client, sqsurl string, url string, totalRequests i
 
 }
 
-func fetch(loadTestStartTime time.Time, client *http.Client, address string, requestcount int, jobs <-chan struct{}, ch chan RequestResult, wg *sync.WaitGroup, awsregion string, requestMethod string, requestBody string, requestHeaders []string) {
+func fetch(loadTestStartTime time.Time, client *http.Client, address string, requestcount int, jobs <-chan struct{}, ch chan RequestResult, wg *sync.WaitGroup, requestMethod string, requestBody string, requestHeaders []string) {
 	defer wg.Done()
 	for _ = range jobs {
 		start := time.Now()

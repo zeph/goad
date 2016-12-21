@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/goadapp/goad",
-	"GoVersion": "go1.6",
-	"GodepVersion": "v60",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v75",
 	"Packages": [
 		"./..."
 	],
@@ -166,8 +166,8 @@
 		},
 		{
 			"ImportPath": "github.com/go-ini/ini",
-			"Comment": "v1.8.6",
-			"Rev": "afbd495e5aaea13597b5e14fe514ddeaa4d76fc3"
+			"Comment": "v1.21.1-1-g2ba15ac",
+			"Rev": "2ba15ac2dc9cdf88c110ec2dc0ced7fa45f5678c"
 		},
 		{
 			"ImportPath": "github.com/gorilla/websocket",
