@@ -11,6 +11,6 @@ build/
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-**.DS_Store
+*.DS_Store
 *.olx
-**.gz
+*.gz
