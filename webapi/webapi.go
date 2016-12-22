@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/goadapp/goad"
-	"github.com/goadapp/goad/queue"
 	"github.com/gorilla/websocket"
+	"github.com/zeph/goad"
+	"github.com/zeph/goad/queue"
 )
 
 var addr = flag.String("addr", ":8080", "http service address")
