@@ -69,7 +69,8 @@ func NewTest(config *TestConfig) (*Test, error) {
 
 // Start a test
 func (t *Test) Start() <-chan queue.RegionsAggData {
-	awsConfig := aws.NewConfig().WithRegion(t.config.Regions[0])
+	nearbyRegion := "sa-east-1" // Hard coding São Paulo
+	awsConfig := aws.NewConfig().WithRegion(nearbyRegion)
 
 	if t.config.AwsProfile != "" {
 		creds := credentials.NewSharedCredentials("", t.config.AwsProfile)
@@ -102,6 +103,7 @@ func (t *Test) Start() <-chan queue.RegionsAggData {
 
 func (t *Test) invokeLambdas(awsConfig *aws.Config, sqsURL string) {
 	lambdas := numberOfLambdas(t.config.Concurrency, len(t.config.Regions))
+	nearbyRegion := "sa-east-1" // Hard coding São Paulo
 
 	for i := 0; i < lambdas; i++ {
 		region := t.config.Regions[i%len(t.config.Regions)]
@@ -123,7 +125,7 @@ func (t *Test) invokeLambdas(awsConfig *aws.Config, sqsURL string) {
 			"-s",
 			fmt.Sprintf("%s", sqsURL),
 			"-q",
-			fmt.Sprintf("%s", c.Regions[0]),
+			fmt.Sprintf("%s", nearbyRegion),
 			"-t",
 			fmt.Sprintf("%s", c.RequestTimeout.String()),
 			"-f",
