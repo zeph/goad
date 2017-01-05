@@ -128,7 +128,9 @@ concurrency level with high throughput.
 
 ## License & Copyright
 
-MIT License. Copyright 2016 [Joao Cardoso][], [Matias Korhonen][], [Rasmus Sten][], and [Stephen Sykes][].
+MIT License. <br>
+Copyright 2017 [Guido Serra][], sponsored by [OLX][] (a [Naspers][] Company)<br>
+Copyright 2016 [Joao Cardoso][], [Matias Korhonen][], [Rasmus Sten][], and [Stephen Sykes][].
 
 See the LICENSE file for more details.
 
@@ -146,3 +148,6 @@ See the LICENSE file for more details.
 [Matias Korhonen]: https://twitter.com/matiaskorhonen
 [Rasmus Sten]: https://twitter.com/pajp
 [Stephen Sykes]: https://twitter.com/sdsykes
+[Guido Serra]: http://guidoserra.it
+[OLX]: http://joinolx.com
+[Naspers]: http://www.naspers.com/
