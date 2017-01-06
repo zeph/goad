@@ -3,11 +3,6 @@ language: go
 go:
   - 1.6
 
-addons:
-  artifacts:
-    paths:
-      - $(git ls-files -o|grep 'build/zip' | tr "\n" ":")
-
 script:
   - make dist
 
