@@ -1,6 +1,4 @@
-all: test all-zip
-
-build: osx linux windows
+all: test osx linux windows
 
 lambda: desenmerda-te
 	GOOS=linux GOARCH=amd64 go build -o data/lambda/goad-lambda ./lambda
@@ -28,7 +26,7 @@ clean:
 	rm -rf data/lambda/goad-lambda
 	rm -rf build
 
-all-zip: build
+all-zip: all
 	mkdir ./build/zip
 	zip -jr ./build/zip/goad-osx-x86-64 ./build/osx/x86-64/goad
 	zip -jr ./build/zip/goad-linux-x86-64 ./build/linux/x86-64/goad
@@ -39,4 +37,4 @@ all-zip: build
 .PHONY: lambda bindata
 
 test:
-	cd queue; go test
+		cd queue; go test
