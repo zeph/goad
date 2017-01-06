@@ -21,8 +21,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/go-ini/ini"
-	"github.com/goadapp/goad/helpers"
-	"github.com/goadapp/goad/queue"
+	"github.com/zeph/goad/helpers"
+	"github.com/zeph/goad/queue"
 )
 
 func main() {

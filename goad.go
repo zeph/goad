@@ -15,9 +15,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/goadapp/goad/infrastructure"
-	"github.com/goadapp/goad/queue"
-	"github.com/goadapp/goad/version"
+	"github.com/zeph/goad/infrastructure"
+	"github.com/zeph/goad/queue"
+	"github.com/zeph/goad/version"
 )
 
 // TestConfig type

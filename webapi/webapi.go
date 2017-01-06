@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/goadapp/goad"
-	"github.com/goadapp/goad/queue"
+	"github.com/zeph/goad"
+	"github.com/zeph/goad/queue"
 	"github.com/gorilla/websocket"
 )
 

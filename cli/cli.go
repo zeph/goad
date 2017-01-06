@@ -14,10 +14,10 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/goadapp/goad"
-	"github.com/goadapp/goad/helpers"
-	"github.com/goadapp/goad/queue"
-	"github.com/goadapp/goad/version"
+	"github.com/zeph/goad"
+	"github.com/zeph/goad/helpers"
+	"github.com/zeph/goad/queue"
+	"github.com/zeph/goad/version"
 	"github.com/nsf/termbox-go"
 )
 
