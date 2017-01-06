@@ -18,4 +18,5 @@ deploy:
     - goad-windows-x86.zip
   skip_cleanup: true
   on:
-    tags
+    tags: true
+    all_branches: true
