@@ -7,7 +7,7 @@ in your working folder and edit it as u wish<br>
 
 TO INSTALL with Homebrew Tap:
  - `brew tap zeph/goad https://github.com/zeph/goad`
- - `brew tap install goad`
+ - `brew cask install goad`
 
 # Goad
 
