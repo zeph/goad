@@ -2,7 +2,8 @@ UPDATE (related [to this exact fork](http://github.com/zeph/goad))
 
 just run the binary, with no parameters <br>
 ...u need to have a copy of [default.ini](desenmerda-te/default.ini)<br>
-in your working folder and edit it as u wish
+in your working folder and edit it as u wish<br>
+(proxy and headers sections are placeholders)
 
 TO INSTALL with Homebrew Tap:
  - `brew tap zeph/goad https://github.com/zeph/goad`
