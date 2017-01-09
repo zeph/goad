@@ -1,6 +1,13 @@
-UPDATE (related to this fork -> zeph/goad): just run the binary, with no parameters
+UPDATE (related [to this exact fork](http://github.com/zeph/goad))
 
-...u need to be in the desenmerda-te/ folder for this. Edit [default.ini](desenmerda-te/default.ini) as u wish
+just run the binary, with no parameters <br>
+...u need to be in the desenmerda-te/ folder for this.
+
+Edit [default.ini](desenmerda-te/default.ini) as u wish
+
+TO INSTALL with Homebrew Tap:
+ - `brew tap zeph/goad https://github.com/zeph/goad`
+ - `brew tap install goad`
 
 # Goad
 
