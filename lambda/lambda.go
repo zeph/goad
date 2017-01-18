@@ -247,7 +247,8 @@ func fetch(loadTestStartTime time.Time, client *http.Client, address string, req
 	r := Repository()
 	for _ = range jobs {
 		start := time.Now()
-		relativePath := r.GetRandom()
+		//relativePath := r.GetRandom()
+		relativePath := r.GetNext()
 		newAddress := strings.Trim(address, "/") + relativePath
 		log.Println(newAddress)
 		req, err := http.NewRequest(requestMethod, newAddress, bytes.NewBufferString(requestBody))
@@ -345,11 +346,18 @@ func fetch(loadTestStartTime time.Time, client *http.Client, address string, req
 
 type repository struct {
 	urls []string
+	i    int
 	mu   sync.RWMutex
 }
 
 func (r *repository) GetRandom() string {
 	return r.urls[rand.Intn(len(r.urls))]
+}
+
+func (r *repository) GetNext() string {
+	url := r.urls[r.i%len(r.urls)]
+	r.i++
+	return url
 }
 
 var (
@@ -390,6 +398,7 @@ func Repository() *repository {
 		}
 		r = &repository{
 			urls: lines,
+			i: 0,
 		}
 	})
 
